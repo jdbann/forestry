@@ -3,6 +3,7 @@ module github.com/jdbann/forestry
 go 1.20
 
 require (
+	github.com/charmbracelet/bubbles v0.16.1
 	github.com/charmbracelet/bubbletea v0.24.2
 	github.com/charmbracelet/lipgloss v0.7.1
 	github.com/charmbracelet/x/exp/teatest v0.0.0-20230707174939-50fb4f48b5b3

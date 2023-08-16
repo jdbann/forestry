@@ -18,7 +18,7 @@ func init() {
 func TestModel(t *testing.T) {
 	m := app.New()
 	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(72, 32))
-	tm.Send(tea.Quit())
+	tm.Send(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	out, err := io.ReadAll(tm.FinalOutput(t))
 	if err != nil {
 		t.Error(err)
