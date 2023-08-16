@@ -19,4 +19,17 @@ var (
 	Grass10 = lipgloss.AdaptiveColor{Dark: "#5cbc6e", Light: "#3d9a50"}
 	Grass11 = lipgloss.AdaptiveColor{Dark: "#71d083", Light: "#297c3b"}
 	Grass12 = lipgloss.AdaptiveColor{Dark: "#c2f0c2", Light: "#203c25"}
+
+	Gray1  = lipgloss.AdaptiveColor{Dark: "#181818", Light: "#fcfcfc"}
+	Gray2  = lipgloss.AdaptiveColor{Dark: "#1b1b1b", Light: "#f9f9f9"}
+	Gray3  = lipgloss.AdaptiveColor{Dark: "#282828", Light: "#f1f1f1"}
+	Gray4  = lipgloss.AdaptiveColor{Dark: "#303030", Light: "#ebebeb"}
+	Gray5  = lipgloss.AdaptiveColor{Dark: "#373737", Light: "#e4e4e4"}
+	Gray6  = lipgloss.AdaptiveColor{Dark: "#3f3f3f", Light: "#dddddd"}
+	Gray7  = lipgloss.AdaptiveColor{Dark: "#4a4a4a", Light: "#d4d4d4"}
+	Gray8  = lipgloss.AdaptiveColor{Dark: "#606060", Light: "#bbbbbb"}
+	Gray9  = lipgloss.AdaptiveColor{Dark: "#6e6e6e", Light: "#8d8d8d"}
+	Gray10 = lipgloss.AdaptiveColor{Dark: "#818181", Light: "#808080"}
+	Gray11 = lipgloss.AdaptiveColor{Dark: "#b1b1b1", Light: "#646464"}
+	Gray12 = lipgloss.AdaptiveColor{Dark: "#eeeeee", Light: "#202020"}
 )

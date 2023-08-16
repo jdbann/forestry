@@ -17,7 +17,7 @@ func init() {
 
 func TestModel(t *testing.T) {
 	m := app.New()
-	tm := teatest.NewTestModel(t, m)
+	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(72, 32))
 	tm.Send(tea.Quit())
 	out, err := io.ReadAll(tm.FinalOutput(t))
 	if err != nil {
