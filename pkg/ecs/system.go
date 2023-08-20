@@ -11,7 +11,7 @@ type Entity struct {
 
 type Component interface{}
 
-type System[C Component] interface {
+type System interface {
 	AddComponentsFromEntity(entity *Entity) bool
 	Update(delta time.Duration)
 }
@@ -45,4 +45,24 @@ func (s *BaseSystem[C]) AddComponentsFromEntity(e *Entity) bool {
 
 	s.Components = append(s.Components, c)
 	return true
+}
+
+type Scene struct {
+	systems []System
+}
+
+func (s *Scene) AddSystem(system System) {
+	s.systems = append(s.systems, system)
+}
+
+func (s *Scene) AddEntity(entity *Entity) {
+	for _, system := range s.systems {
+		_ = system.AddComponentsFromEntity(entity)
+	}
+}
+
+func (s *Scene) Update(delta time.Duration) {
+	for _, system := range s.systems {
+		system.Update(delta)
+	}
 }
