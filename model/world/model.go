@@ -14,15 +14,19 @@ import (
 var mapStyle = lipgloss.NewStyle().Background(color.Grass3).Foreground(color.Grass11)
 
 type Model struct {
-	Entities     []*ecs.Entity
 	RenderSystem *render.System
+	Scene        *ecs.Scene
 	Size         geo.Size
 }
 
 func New(size geo.Size) Model {
+	scene := &ecs.Scene{}
+	renderSystem := &render.System{}
+	scene.AddSystem(renderSystem)
+
 	return Model{
-		Entities:     nil,
-		RenderSystem: &render.System{},
+		RenderSystem: renderSystem,
+		Scene:        scene,
 		Size:         size,
 	}
 }
@@ -34,8 +38,7 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case AddEntityMsg:
-		m.Entities = append(m.Entities, msg)
-		m.RenderSystem.AddComponentsFromEntity(msg)
+		m.Scene.AddEntity(msg)
 		return m, nil
 	}
 
@@ -54,11 +57,7 @@ func (m Model) View() string {
 
 	PixelLoop:
 		for x := 0; x < m.Size.Width; x++ {
-			for _, entity := range m.Entities {
-				component, ok := ecs.GetComponent[*render.Component](entity)
-				if !ok {
-					continue
-				}
+			for _, component := range m.RenderSystem.Components {
 				if component.Position.Equals(geo.Point{X: x, Y: y}) {
 					b.WriteString(component.View())
 					continue PixelLoop

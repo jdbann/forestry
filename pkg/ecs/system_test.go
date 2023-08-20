@@ -9,7 +9,9 @@ import (
 )
 
 func TestEntityComponentSystem(t *testing.T) {
+	scene := &ecs.Scene{}
 	system := &countSystem{}
+	scene.AddSystem(system)
 	entity := &ecs.Entity{}
 
 	runStep(t, "try to get component when not added to entity", func(t *testing.T) {
@@ -18,10 +20,7 @@ func TestEntityComponentSystem(t *testing.T) {
 		assert.Assert(t, !ok)
 	})
 
-	runStep(t, "add entity without component to system", func(t *testing.T) {
-		ok := system.AddComponentsFromEntity(entity)
-		assert.Assert(t, !ok)
-	})
+	scene.AddEntity(entity)
 
 	runStep(t, "get component after adding to entity", func(t *testing.T) {
 		ecs.AddComponent[*countComponent](entity, &countComponent{})
@@ -36,7 +35,7 @@ func TestEntityComponentSystem(t *testing.T) {
 	})
 
 	runStep(t, "update system and confirm component was updated", func(t *testing.T) {
-		system.Update(0)
+		scene.Update(0)
 		component, ok := ecs.GetComponent[*countComponent](entity)
 		assert.Assert(t, ok)
 		assert.Equal(t, component.count, 1)
