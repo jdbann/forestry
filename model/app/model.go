@@ -1,6 +1,8 @@
 package app
 
 import (
+	"math/rand"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,16 +18,23 @@ type Model struct {
 	World tea.Model
 }
 
-func New() Model {
+type Params struct {
+	Rng *rand.Rand
+}
+
+func New(params Params) Model {
 	return Model{
-		Help:  help.New(),
-		Keys:  DefaultKeys,
-		World: world.New(geo.Size{Width: 64, Height: 24}),
+		Help: help.New(),
+		Keys: DefaultKeys,
+		World: world.New(world.Params{
+			Rng:  params.Rng,
+			Size: geo.Size{Width: 64, Height: 24},
+		}),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+	return tea.Batch(m.World.Init(), world.AddPerson)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -41,7 +50,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Help.Width = m.Size.Width
 	}
 
-	return m, nil
+	var cmd tea.Cmd
+	m.World, cmd = m.World.Update(msg)
+	return m, cmd
 }
 
 func (m Model) View() string {

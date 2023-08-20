@@ -9,7 +9,17 @@ type Entity struct {
 	components []Component
 }
 
-type Component interface{}
+func NewEntity(components ...Component) *Entity {
+	e := &Entity{}
+	for _, component := range components {
+		AddComponent(e, component)
+	}
+	return e
+}
+
+type Component interface {
+	SetEntity(entity *Entity)
+}
 
 type System interface {
 	AddComponentsFromEntity(entity *Entity) bool
@@ -18,6 +28,7 @@ type System interface {
 
 func AddComponent[C Component](e *Entity, c C) {
 	e.components = append(e.components, c)
+	c.SetEntity(e)
 }
 
 func GetComponent[C Component](e *Entity) (C, bool) {
@@ -31,7 +42,13 @@ func GetComponent[C Component](e *Entity) (C, bool) {
 	return component, false
 }
 
-type BaseComponent struct{}
+type BaseComponent struct {
+	Entity *Entity
+}
+
+func (c *BaseComponent) SetEntity(entity *Entity) {
+	c.Entity = entity
+}
 
 type BaseSystem[C Component] struct {
 	Components []C
