@@ -8,6 +8,8 @@ import (
 )
 
 type Component struct {
+	ecs.BaseComponent
+
 	Position geo.Point
 	Rune     rune
 }

@@ -2,6 +2,7 @@ package app_test
 
 import (
 	"io"
+	"math/rand"
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,7 +17,9 @@ func init() {
 }
 
 func TestModel(t *testing.T) {
-	m := app.New()
+	m := app.New(app.Params{
+		Rng: rand.New(rand.NewSource(98)),
+	})
 	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(72, 32))
 	tm.Send(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	out, err := io.ReadAll(tm.FinalOutput(t))
