@@ -27,3 +27,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
+      - name: lint
+        uses: docker://morphy/revive-action:v2
+        with:
+          config: revive.toml
