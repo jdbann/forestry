@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
@@ -23,9 +24,14 @@ type System struct {
 	WorldSize geo.Size
 }
 
-func (s System) Update(delta time.Duration) {
+func (s System) Update(msg tea.Msg) tea.Cmd {
+	delta, ok := msg.(ecs.TickMsg)
+	if !ok {
+		return nil
+	}
+
 	for _, component := range s.Components {
-		component.SinceLastStep += delta
+		component.SinceLastStep += time.Duration(delta)
 		if component.SinceLastStep < component.StepFrequency {
 			continue
 		}
@@ -60,4 +66,6 @@ func (s System) Update(delta time.Duration) {
 
 		renderComponent.Position = renderComponent.Position.Add(step)
 	}
+
+	return nil
 }

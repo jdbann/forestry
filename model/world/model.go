@@ -49,22 +49,31 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var (
+		cmds []tea.Cmd
+		cmd  tea.Cmd
+	)
 	switch msg := msg.(type) {
 	case AddEntityMsg:
 		m.Scene.AddEntity(msg)
+		return m, nil
 
 	case AddPersonMsg:
 		m.Scene.AddEntity(newPerson(m.Rng, m.MapSize))
+		return m, nil
 
-	case TickMsg:
-		m.Scene.Update(time.Duration(msg))
-		return m, doTick()
+	case ecs.TickMsg:
+		cmds = append(cmds, doTick())
 
 	case tea.WindowSizeMsg:
 		m.Size = geo.Size(msg)
+		return m, nil
 	}
 
-	return m, nil
+	cmd = m.Scene.Update(msg)
+	cmds = append(cmds, cmd)
+
+	return m, tea.Batch(cmds...)
 }
 
 func (m Model) View() string {
@@ -100,7 +109,7 @@ func (m Model) View() string {
 func doTick() tea.Cmd {
 	tickRequested := time.Now()
 	return tea.Tick(frameRate, func(t time.Time) tea.Msg {
-		return TickMsg(time.Since(tickRequested))
+		return ecs.TickMsg(time.Since(tickRequested))
 	})
 }
 
@@ -117,7 +126,6 @@ func newPerson(rng *rand.Rand, bounds geo.Size) *ecs.Entity {
 	)
 }
 
-type TickMsg time.Duration
 type AddEntityMsg *ecs.Entity
 type AddPersonMsg struct{}
 

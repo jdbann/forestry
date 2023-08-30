@@ -26,7 +26,7 @@ func TestModel(t *testing.T) {
 	})
 	tm := teatest.NewTestModel(t, m)
 	tm.Send(world.AddPersonMsg{})
-	tm.Send(world.TickMsg(time.Second + 1))
+	tm.Send(ecs.TickMsg(time.Second + 1))
 	tm.Send(tea.Quit())
 	out, err := io.ReadAll(tm.FinalOutput(t))
 	if err != nil {

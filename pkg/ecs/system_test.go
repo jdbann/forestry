@@ -2,8 +2,8 @@ package ecs_test
 
 import (
 	"testing"
-	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"gotest.tools/v3/assert"
 )
@@ -51,10 +51,11 @@ type countSystem struct {
 	ecs.BaseSystem[*countComponent]
 }
 
-func (s *countSystem) Update(_ time.Duration) {
+func (s *countSystem) Update(_ tea.Msg) tea.Cmd {
 	for _, component := range s.BaseSystem.Components {
 		component.count++
 	}
+	return nil
 }
 
 func runStep(t *testing.T, name string, fn func(t *testing.T)) {

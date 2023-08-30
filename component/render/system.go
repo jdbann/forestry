@@ -1,8 +1,7 @@
 package render
 
 import (
-	"time"
-
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
 )
@@ -22,4 +21,6 @@ type System struct {
 	ecs.BaseSystem[*Component]
 }
 
-func (s System) Update(_ time.Duration) {}
+func (s System) Update(_ tea.Msg) tea.Cmd {
+	return nil
+}

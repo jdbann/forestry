@@ -1,6 +1,10 @@
 package ecs
 
-import "time"
+import (
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 var entityID = 0
 
@@ -23,7 +27,7 @@ type Component interface {
 
 type System interface {
 	AddComponentsFromEntity(entity *Entity) bool
-	Update(delta time.Duration)
+	Update(msg tea.Msg) tea.Cmd
 }
 
 func AddComponent[C Component](e *Entity, c C) {
@@ -78,8 +82,17 @@ func (s *Scene) AddEntity(entity *Entity) {
 	}
 }
 
-func (s *Scene) Update(delta time.Duration) {
+func (s *Scene) Update(msg tea.Msg) tea.Cmd {
+	var (
+		cmds []tea.Cmd
+		cmd  tea.Cmd
+	)
 	for _, system := range s.systems {
-		system.Update(delta)
+		cmd = system.Update(msg)
+		cmds = append(cmds, cmd)
 	}
+
+	return tea.Batch(cmds...)
 }
+
+type TickMsg time.Duration
