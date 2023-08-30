@@ -56,6 +56,10 @@ type BaseComponent struct {
 	Entity *Entity
 }
 
+func (c *BaseComponent) Init() tea.Cmd {
+	return nil
+}
+
 func (c *BaseComponent) SetEntity(entity *Entity) {
 	c.Entity = entity
 }

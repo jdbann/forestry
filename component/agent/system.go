@@ -1,3 +1,6 @@
+// Package agent provides a component which allows entities to manage their movement based on set behaviours.
+//
+// Behaviours are not yet implemented so agents will randomly wander around within the provided boundaries.
 package agent
 
 import (
@@ -10,6 +13,7 @@ import (
 	"github.com/jdbann/forestry/pkg/geo"
 )
 
+// Component keeps track of an entity's speed and determines if enough time has elapsed for the next step to be taken.
 type Component struct {
 	ecs.BaseComponent
 
@@ -17,10 +21,7 @@ type Component struct {
 	SinceLastStep time.Duration
 }
 
-func (c Component) Init() tea.Cmd {
-	return nil
-}
-
+// System manages agent components and applies each component's behaviour.
 type System struct {
 	ecs.BaseSystem[*Component]
 
@@ -28,6 +29,7 @@ type System struct {
 	WorldSize geo.Size
 }
 
+// Update handles tick messages, moving agents if enough time has elapsed.
 func (s System) Update(msg tea.Msg) tea.Cmd {
 	delta, ok := msg.(ecs.TickMsg)
 	if !ok {
