@@ -8,7 +8,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jdbann/forestry/component/agent"
+	"github.com/jdbann/forestry/component/brain"
 	"github.com/jdbann/forestry/component/render"
+	"github.com/jdbann/forestry/entity/person"
 	"github.com/jdbann/forestry/pkg/color"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
@@ -35,6 +37,7 @@ func New(params Params) Model {
 	renderSystem := &render.System{}
 	scene.AddSystem(renderSystem)
 	scene.AddSystem(&agent.System{WorldSize: params.MapSize, Rng: params.Rng})
+	scene.AddSystem(&brain.System{})
 
 	return Model{
 		RenderSystem: renderSystem,
@@ -45,7 +48,7 @@ func New(params Params) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	return doTick()
+	return tea.Batch(doTick(), m.Scene.Init())
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -54,13 +57,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmd  tea.Cmd
 	)
 	switch msg := msg.(type) {
-	case AddEntityMsg:
-		m.Scene.AddEntity(msg)
-		return m, nil
-
 	case AddPersonMsg:
-		m.Scene.AddEntity(newPerson(m.Rng, m.MapSize))
-		return m, nil
+		cmd = m.Scene.AddEntity(newPerson(m.Rng, m.MapSize))
+		return m, cmd
 
 	case ecs.TickMsg:
 		cmds = append(cmds, doTick())
@@ -114,7 +113,7 @@ func doTick() tea.Cmd {
 }
 
 func newPerson(rng *rand.Rand, bounds geo.Size) *ecs.Entity {
-	return ecs.NewEntity(
+	e := ecs.NewEntity(
 		&render.Component{
 			Position: bounds.PointWithin(rng),
 			Rune:     'P',
@@ -124,9 +123,10 @@ func newPerson(rng *rand.Rand, bounds geo.Size) *ecs.Entity {
 			SinceLastStep: 0,
 		},
 	)
+	ecs.AddComponent(e, person.BrainComponent(e.ID()))
+	return e
 }
 
-type AddEntityMsg *ecs.Entity
 type AddPersonMsg struct{}
 
 func AddPerson() tea.Msg {

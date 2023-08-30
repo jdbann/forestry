@@ -17,6 +17,10 @@ type Component struct {
 	SinceLastStep time.Duration
 }
 
+func (c Component) Init() tea.Cmd {
+	return nil
+}
+
 type System struct {
 	ecs.BaseSystem[*Component]
 

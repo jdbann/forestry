@@ -21,12 +21,18 @@ func NewEntity(components ...Component) *Entity {
 	return e
 }
 
+func (e Entity) ID() int {
+	return e.id
+}
+
 type Component interface {
+	Init() tea.Cmd
 	SetEntity(entity *Entity)
 }
 
 type System interface {
-	AddComponentsFromEntity(entity *Entity) bool
+	AddComponentsFromEntity(entity *Entity) tea.Cmd
+	Init() tea.Cmd
 	Update(msg tea.Msg) tea.Cmd
 }
 
@@ -58,14 +64,22 @@ type BaseSystem[C Component] struct {
 	Components []C
 }
 
-func (s *BaseSystem[C]) AddComponentsFromEntity(e *Entity) bool {
+func (s *BaseSystem[C]) Init() tea.Cmd {
+	var cmds []tea.Cmd
+	for _, c := range s.Components {
+		cmds = append(cmds, c.Init())
+	}
+	return tea.Batch(cmds...)
+}
+
+func (s *BaseSystem[C]) AddComponentsFromEntity(e *Entity) tea.Cmd {
 	c, ok := GetComponent[C](e)
 	if !ok {
-		return false
+		return nil
 	}
 
 	s.Components = append(s.Components, c)
-	return true
+	return c.Init()
 }
 
 type Scene struct {
@@ -76,10 +90,20 @@ func (s *Scene) AddSystem(system System) {
 	s.systems = append(s.systems, system)
 }
 
-func (s *Scene) AddEntity(entity *Entity) {
+func (s *Scene) AddEntity(entity *Entity) tea.Cmd {
+	var cmds []tea.Cmd
 	for _, system := range s.systems {
-		_ = system.AddComponentsFromEntity(entity)
+		cmds = append(cmds, system.AddComponentsFromEntity(entity))
 	}
+	return tea.Batch(cmds...)
+}
+
+func (s *Scene) Init() tea.Cmd {
+	var cmds []tea.Cmd
+	for _, system := range s.systems {
+		cmds = append(cmds, system.Init())
+	}
+	return tea.Batch(cmds...)
 }
 
 func (s *Scene) Update(msg tea.Msg) tea.Cmd {
