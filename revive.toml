@@ -1,0 +1,28 @@
+ignoreGeneratedHeader = false
+severity = "warning"
+confidence = 0.8
+errorCode = 0
+warningCode = 0
+
+enableAllRules = true
+
+[rule.add-constant]
+  arguments = [ { maxLitCount = "1", allowStrs = "\"\"", allowInts = "0,1" } ]
+[rule.argument-limit]
+  disabled = true
+[rule.banned-characters]
+  disabled = true
+[rule.cognitive-complexity]
+  disabled = true
+[rule.cyclomatic]
+  disabled = true
+[rule.file-header]
+  disabled = true
+[rule.function-length]
+  disabled = true
+[rule.function-result-limit]
+  disabled = true
+[rule.line-length-limit]
+  disabled = true
+[rule.max-public-structs]
+  disabled = true
