@@ -13,6 +13,10 @@ type Component struct {
 	Rune     rune
 }
 
+func (c Component) Init() tea.Cmd {
+	return nil
+}
+
 func (c Component) View() string {
 	return string(c.Rune)
 }
