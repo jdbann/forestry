@@ -1,6 +1,7 @@
 package app_test
 
 import (
+	"bytes"
 	"io"
 	"math/rand"
 	"testing"
@@ -21,10 +22,10 @@ func TestModel(t *testing.T) {
 		Rng: rand.New(rand.NewSource(98)),
 	})
 	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(72, 32))
+	var out bytes.Buffer
+	teatest.WaitFor(t, io.TeeReader(tm.Output(), &out), func(bts []byte) bool {
+		return bytes.Contains(bts, []byte("quit"))
+	})
 	tm.Send(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
-	out, err := io.ReadAll(tm.FinalOutput(t))
-	if err != nil {
-		t.Error(err)
-	}
-	teatest.RequireEqualOutput(t, out)
+	teatest.RequireEqualOutput(t, out.Bytes())
 }
