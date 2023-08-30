@@ -18,6 +18,7 @@ var frameRate = time.Second / 60
 var mapStyle = lipgloss.NewStyle().Background(color.Grass3).Foreground(color.Grass11)
 
 type Model struct {
+	MapSize      geo.Size
 	RenderSystem *render.System
 	Rng          *rand.Rand
 	Scene        *ecs.Scene
@@ -25,21 +26,21 @@ type Model struct {
 }
 
 type Params struct {
-	Rng  *rand.Rand
-	Size geo.Size
+	Rng     *rand.Rand
+	MapSize geo.Size
 }
 
 func New(params Params) Model {
 	scene := &ecs.Scene{}
 	renderSystem := &render.System{}
 	scene.AddSystem(renderSystem)
-	scene.AddSystem(&agent.System{WorldSize: params.Size, Rng: params.Rng})
+	scene.AddSystem(&agent.System{WorldSize: params.MapSize, Rng: params.Rng})
 
 	return Model{
 		RenderSystem: renderSystem,
 		Rng:          params.Rng,
 		Scene:        scene,
-		Size:         params.Size,
+		MapSize:      params.MapSize,
 	}
 }
 
@@ -53,11 +54,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Scene.AddEntity(msg)
 
 	case AddPersonMsg:
-		m.Scene.AddEntity(newPerson(m.Rng, m.Size))
+		m.Scene.AddEntity(newPerson(m.Rng, m.MapSize))
 
 	case TickMsg:
 		m.Scene.Update(time.Duration(msg))
 		return m, doTick()
+
+	case tea.WindowSizeMsg:
+		m.Size = geo.Size(msg)
 	}
 
 	return m, nil
@@ -68,13 +72,13 @@ func (m Model) View() string {
 
 	// This is an inefficient method for drawing the map but it is good enough
 	// for now.
-	for y := 0; y < m.Size.Height; y++ {
+	for y := 0; y < m.MapSize.Height; y++ {
 		if y > 0 {
 			b.WriteString("\n")
 		}
 
 	PixelLoop:
-		for x := 0; x < m.Size.Width; x++ {
+		for x := 0; x < m.MapSize.Width; x++ {
 			for _, component := range m.RenderSystem.Components {
 				if component.Position.Equals(geo.Point{X: x, Y: y}) {
 					b.WriteString(component.View())
@@ -86,7 +90,11 @@ func (m Model) View() string {
 		}
 	}
 
-	return mapStyle.Render(b.String())
+	return lipgloss.Place(
+		m.Size.Width, m.Size.Height,
+		lipgloss.Center, lipgloss.Center,
+		mapStyle.Render(b.String()),
+	)
 }
 
 func doTick() tea.Cmd {
