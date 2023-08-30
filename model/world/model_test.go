@@ -21,8 +21,8 @@ func init() {
 
 func TestModel(t *testing.T) {
 	m := world.New(world.Params{
-		Rng:  rand.New(rand.NewSource(98)),
-		Size: geo.Size{Width: 64, Height: 32},
+		Rng:     rand.New(rand.NewSource(98)),
+		MapSize: geo.Size{Width: 64, Height: 32},
 	})
 	tm := teatest.NewTestModel(t, m)
 	tm.Send(world.AddPersonMsg{})
