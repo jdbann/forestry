@@ -9,10 +9,12 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/exp/teatest"
+	"github.com/muesli/termenv"
+
 	"github.com/jdbann/forestry/model/world"
+	"github.com/jdbann/forestry/pkg/client"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
-	"github.com/muesli/termenv"
 )
 
 func init() {
@@ -20,7 +22,9 @@ func init() {
 }
 
 func TestModel(t *testing.T) {
+	c, _ := client.New("http://local.test:3000")
 	m := world.New(world.Params{
+		Client:  c,
 		Rng:     rand.New(rand.NewSource(98)),
 		MapSize: geo.Size{Width: 64, Height: 32},
 	})

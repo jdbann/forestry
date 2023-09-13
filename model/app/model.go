@@ -5,9 +5,11 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/jdbann/forestry/model/help"
 	"github.com/jdbann/forestry/model/stack"
 	"github.com/jdbann/forestry/model/world"
+	"github.com/jdbann/forestry/pkg/client"
 	"github.com/jdbann/forestry/pkg/geo"
 )
 
@@ -17,7 +19,8 @@ type Model struct {
 }
 
 type Params struct {
-	Rng *rand.Rand
+	Client *client.Client
+	Rng    *rand.Rand
 }
 
 func New(params Params) Model {
@@ -26,6 +29,7 @@ func New(params Params) Model {
 		Keys: keys,
 	})
 	world := world.New(world.Params{
+		Client:  params.Client,
 		Rng:     params.Rng,
 		MapSize: geo.Size{Width: 64, Height: 24},
 	})

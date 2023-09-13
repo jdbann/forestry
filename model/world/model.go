@@ -7,17 +7,22 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
 	"github.com/jdbann/forestry/component/agent"
 	"github.com/jdbann/forestry/component/brain"
+	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/entity/person"
+	"github.com/jdbann/forestry/pkg/client"
 	"github.com/jdbann/forestry/pkg/color"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
 )
 
-var frameRate = time.Second / 60
-var mapStyle = lipgloss.NewStyle().Background(color.Grass3).Foreground(color.Grass11)
+var (
+	frameRate = time.Second / 60
+	mapStyle  = lipgloss.NewStyle().Background(color.Grass3).Foreground(color.Grass11)
+)
 
 type Model struct {
 	MapSize      geo.Size
@@ -28,6 +33,7 @@ type Model struct {
 }
 
 type Params struct {
+	Client  *client.Client
 	Rng     *rand.Rand
 	MapSize geo.Size
 }
@@ -35,6 +41,7 @@ type Params struct {
 func New(params Params) Model {
 	scene := &ecs.Scene{}
 	renderSystem := &render.System{}
+	scene.AddSystem(&pda.System{Client: params.Client})
 	scene.AddSystem(renderSystem)
 	scene.AddSystem(&agent.System{WorldSize: params.MapSize, Rng: params.Rng})
 	scene.AddSystem(&brain.System{})
@@ -58,7 +65,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 	switch msg := msg.(type) {
 	case AddPersonMsg:
-		cmd = m.Scene.AddEntity(newPerson(m.Rng, m.MapSize))
+		cmd = m.Scene.AddEntity(person.New(m.MapSize.PointWithin(m.Rng)))
 		return m, cmd
 
 	case ecs.TickMsg:
@@ -110,21 +117,6 @@ func doTick() tea.Cmd {
 	return tea.Tick(frameRate, func(t time.Time) tea.Msg {
 		return ecs.TickMsg(time.Since(tickRequested))
 	})
-}
-
-func newPerson(rng *rand.Rand, bounds geo.Size) *ecs.Entity {
-	e := ecs.NewEntity(
-		&render.Component{
-			Position: bounds.PointWithin(rng),
-			Rune:     'P',
-		},
-		&agent.Component{
-			StepFrequency: time.Millisecond * 500,
-			SinceLastStep: 0,
-		},
-	)
-	ecs.AddComponent(e, person.BrainComponent(e.ID()))
-	return e
 }
 
 type AddPersonMsg struct{}

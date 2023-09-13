@@ -9,8 +9,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/exp/teatest"
-	"github.com/jdbann/forestry/model/app"
 	"github.com/muesli/termenv"
+
+	"github.com/jdbann/forestry/model/app"
+	"github.com/jdbann/forestry/pkg/client"
 )
 
 func init() {
@@ -18,8 +20,10 @@ func init() {
 }
 
 func TestModel(t *testing.T) {
+	c, _ := client.New("http://local.test:3000")
 	m := app.New(app.Params{
-		Rng: rand.New(rand.NewSource(98)),
+		Client: c,
+		Rng:    rand.New(rand.NewSource(98)),
 	})
 	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(72, 32))
 	var out bytes.Buffer

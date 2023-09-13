@@ -3,16 +3,18 @@ package person
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/jdbann/forestry/component/brain"
+	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
+	"github.com/jdbann/forestry/pkg/client"
 	"github.com/jdbann/forestry/pkg/ecs"
 )
 
-func BrainComponent(id int) *brain.Component {
+func BrainComponent() *brain.Component {
 	unregistered := &UnregisteredState{}
 	return &brain.Component{
 		AvailableStates: []brain.State{unregistered, &RegisteredState{}},
@@ -45,9 +47,14 @@ func (s *UnregisteredState) Update(c *brain.Component, msg tea.Msg) tea.Cmd {
 }
 
 func (s UnregisteredState) OnEnter(c *brain.Component) tea.Cmd {
+	pdac, ok := ecs.GetComponent[*pda.Component](c.Entity)
+	if !ok {
+		return nil
+	}
+
 	return tea.Sequence(tea.Tick(time.Second, func(t time.Time) tea.Msg {
 		return nil
-	}), attemptRegistration(c.Entity.ID()))
+	}), attemptRegistration(pdac.Client, c.Entity.ID()))
 }
 
 type RegisteredState struct {
@@ -55,30 +62,30 @@ type RegisteredState struct {
 }
 
 func (s RegisteredState) Update(_ *brain.Component, _ tea.Msg) tea.Cmd {
-	fmt.Println("RegisteredState - Update")
+	_, _ = fmt.Println("RegisteredState - Update")
 	return nil
 }
 
-func attemptRegistration(id int) tea.Cmd {
+type registerPayload struct {
+	ID int `json:"id"`
+}
+
+func attemptRegistration(c *client.Client, id int) tea.Cmd {
 	return func() tea.Msg {
-		body := fmt.Sprintf(`{"id": %d}`, id)
-		request, err := http.NewRequest(http.MethodPost, "http://localhost:3000/people", strings.NewReader(body))
+		status, _, err := client.MakeRequest[struct{}](c, http.MethodPost, "/people", registerPayload{ID: id})
 		if err != nil {
 			return errMsg(err)
 		}
 
-		res, err := http.DefaultClient.Do(request)
-		if err != nil {
-			return errMsg(err)
-		}
-
-		if res.StatusCode != 200 {
-			return errMsg(fmt.Errorf("registering: %s", res.Status))
+		if status != http.StatusOK {
+			return errMsg(fmt.Errorf("registering: %d", status))
 		}
 
 		return registeredMsg{}
 	}
 }
 
-type errMsg error
-type registeredMsg struct{}
+type (
+	errMsg        error
+	registeredMsg struct{}
+)
