@@ -56,7 +56,9 @@ type BaseComponent struct {
 	Entity *Entity
 }
 
-func (c *BaseComponent) Init() tea.Cmd {
+// Init satisfies the Component interface for any type embedding BaseComponent
+// without overrinding with their own method.
+func (*BaseComponent) Init() tea.Cmd {
 	return nil
 }
 
