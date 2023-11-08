@@ -10,6 +10,7 @@ import (
 
 	"github.com/jdbann/forestry/component/agent"
 	"github.com/jdbann/forestry/component/brain"
+	"github.com/jdbann/forestry/component/graph"
 	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/entity/person"
@@ -41,6 +42,9 @@ type Params struct {
 func New(params Params) Model {
 	scene := &ecs.Scene{}
 	renderSystem := &render.System{}
+	graphSystem := graph.NewSystem(params.MapSize)
+
+	scene.AddSystem(graphSystem)
 	scene.AddSystem(&pda.System{Client: params.Client})
 	scene.AddSystem(renderSystem)
 	scene.AddSystem(&agent.System{WorldSize: params.MapSize, Rng: params.Rng})

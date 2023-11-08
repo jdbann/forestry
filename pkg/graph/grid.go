@@ -6,11 +6,13 @@ import (
 	"github.com/jdbann/forestry/pkg/geo"
 )
 
+// GridGraph holds a graph that represents a two dimensional grid, where individual nodes can be identified based on their X and Y coordinates.
 type GridGraph struct {
 	graph         *graph[geo.Point]
 	width, height int
 }
 
+// NewGridGraph builds a new GridGraph of the specified size.
 func NewGridGraph(width, height int) *GridGraph {
 	g := new[geo.Point]()
 
@@ -39,6 +41,7 @@ func NewGridGraph(width, height int) *GridGraph {
 	}
 }
 
+// FindPath attempts to find a path from the starting location to the ending location. It returns the list of points that make up the requested path, and whether or not a path could be successfully found.
 func (gg *GridGraph) FindPath(from, to geo.Point) ([]geo.Point, bool) {
 	nodeID := func(x, y int) int { return x + (y * gg.width) }
 
@@ -55,6 +58,7 @@ func (gg *GridGraph) FindPath(from, to geo.Point) ([]geo.Point, bool) {
 	return path, true
 }
 
+// FindNeighbours returns the coordinates for the nodes that are neighbours of the target node.
 func (gg *GridGraph) FindNeighbours(target geo.Point) []geo.Point {
 	nodeID := func(x, y int) int { return x + (y * gg.width) }
 
