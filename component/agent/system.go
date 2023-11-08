@@ -8,6 +8,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/jdbann/forestry/component/graph"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
@@ -49,28 +50,22 @@ func (s System) Update(msg tea.Msg) tea.Cmd {
 			continue
 		}
 
-		var (
-			step        geo.Vector
-			randomSteps = []geo.Vector{
-				{X: 0, Y: 1},
-				{X: 1, Y: 0},
-				{X: 0, Y: -1},
-				{X: -1, Y: 0},
-			}
-		)
-
-		s.Rng.Shuffle(len(randomSteps), func(i, j int) {
-			randomSteps[i], randomSteps[j] = randomSteps[j], randomSteps[i]
-		})
-
-		for _, randomStep := range randomSteps {
-			if renderComponent.Position.Add(randomStep).WithinSize(s.WorldSize) {
-				step = randomStep
-				break
-			}
+		graphComponent, ok := ecs.GetComponent[*graph.Component](component.Entity)
+		if !ok {
+			continue
 		}
 
-		renderComponent.Position = renderComponent.Position.Add(step)
+		neighbours := graphComponent.Graph.FindNeighbours(renderComponent.Position)
+
+		if len(neighbours) == 0 {
+			continue
+		}
+
+		s.Rng.Shuffle(len(neighbours), func(i, j int) {
+			neighbours[i], neighbours[j] = neighbours[j], neighbours[i]
+		})
+
+		renderComponent.Position = neighbours[0]
 	}
 
 	return nil

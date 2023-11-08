@@ -2,10 +2,12 @@ package priority
 
 import "container/heap"
 
+// Queue holds a list of items which will efficiently be returned in priority order.
 type Queue[V any] struct {
 	items items[V]
 }
 
+// NewQueue builds a new Queue of the specified size.
 func NewQueue[V any](size int) *Queue[V] {
 	items := make(items[V], 0, size)
 	heap.Init(&items)
@@ -14,14 +16,17 @@ func NewQueue[V any](size int) *Queue[V] {
 	}
 }
 
+// Len returns the length of the queue.
 func (q Queue[V]) Len() int {
 	return q.items.Len()
 }
 
+// Push adds a new item into the queue. It will be inserted at the appropriate place in the queue based on the specified priority.
 func (q *Queue[V]) Push(v V, p float64) {
 	heap.Push(&q.items, &item[V]{value: v, priority: p})
 }
 
+// Pop removes and returns the highest priority item in the queue.
 func (q *Queue[V]) Pop() V {
 	return heap.Pop(&q.items).(*item[V]).value
 }
