@@ -72,6 +72,10 @@ func (gg *GridGraph) FindNeighbours(target geo.Point) []geo.Point {
 	return neighbours
 }
 
+func (gg *GridGraph) Size() geo.Size {
+	return geo.Size{Width: gg.width, Height: gg.height}
+}
+
 func gridHeuristic(p1, p2 geo.Point) float64 {
 	return math.Sqrt(math.Pow(float64(p1.X-p2.X), 2) + math.Pow(float64(p1.Y-p2.Y), 2))
 }

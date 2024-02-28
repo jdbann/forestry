@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"math/rand"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,7 +15,9 @@ type Entity struct {
 }
 
 func NewEntity(components ...Component) *Entity {
-	e := &Entity{}
+	e := &Entity{
+		id: rand.Int(),
+	}
 	for _, component := range components {
 		AddComponent(e, component)
 	}

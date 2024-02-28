@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jdbann/forestry/component/agent"
+	"github.com/jdbann/forestry/component/employment"
 	"github.com/jdbann/forestry/component/graph"
 	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
@@ -18,12 +19,12 @@ func New(at geo.Point) *ecs.Entity {
 			Rune:     'P',
 		},
 		&agent.Component{
-			StepFrequency: time.Millisecond * 500,
+			StepFrequency: time.Millisecond * 100,
 			SinceLastStep: 0,
 		},
 		&pda.Component{},
 		&graph.Component{},
+		&employment.Component{},
 	)
-	ecs.AddComponent(e, BrainComponent())
 	return e
 }
