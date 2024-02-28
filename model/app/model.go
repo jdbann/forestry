@@ -1,8 +1,6 @@
 package app
 
 import (
-	"math/rand"
-
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 
@@ -20,7 +18,6 @@ type Model struct {
 
 type Params struct {
 	Client *client.Client
-	Rng    *rand.Rand
 }
 
 func New(params Params) Model {
@@ -30,7 +27,6 @@ func New(params Params) Model {
 	})
 	worldModel := world.New(world.Params{
 		Client:  params.Client,
-		Rng:     params.Rng,
 		MapSize: geo.Size{Width: 64, Height: 24},
 	})
 	stackModel := stack.NewVertical(

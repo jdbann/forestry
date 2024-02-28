@@ -26,7 +26,6 @@ type Component struct {
 type System struct {
 	ecs.BaseSystem[*Component]
 
-	Rng       *rand.Rand
 	WorldSize geo.Size
 }
 
@@ -61,7 +60,7 @@ func (s System) Update(msg tea.Msg) tea.Cmd {
 			continue
 		}
 
-		s.Rng.Shuffle(len(neighbours), func(i, j int) {
+		rand.Shuffle(len(neighbours), func(i, j int) {
 			neighbours[i], neighbours[j] = neighbours[j], neighbours[i]
 		})
 

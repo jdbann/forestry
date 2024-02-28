@@ -3,9 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 
@@ -26,7 +24,6 @@ func main() {
 
 	m := app.New(app.Params{
 		Client: c,
-		Rng:    rand.New(rand.NewSource(time.Now().UnixNano())),
 	})
 	p := tea.NewProgram(m, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {

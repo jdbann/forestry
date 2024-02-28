@@ -30,17 +30,17 @@ type Rect struct {
 	Size   Size
 }
 
-func (r Rect) PointWithin(rng *rand.Rand) Point {
+func (r Rect) RandomPointWithin() Point {
 	return Point{
-		X: r.Origin.X + rng.Intn(r.Size.Width-r.Origin.X-1),
-		Y: r.Origin.Y + rng.Intn(r.Size.Height-r.Origin.Y-1),
+		X: r.Origin.X + rand.Intn(r.Size.Width-r.Origin.X-1),
+		Y: r.Origin.Y + rand.Intn(r.Size.Height-r.Origin.Y-1),
 	}
 }
 
 type Size struct{ Width, Height int }
 
-func (s Size) PointWithin(rng *rand.Rand) Point {
-	return Rect{Size: s}.PointWithin(rng)
+func (s Size) RandomPointWithin() Point {
+	return Rect{Size: s}.RandomPointWithin()
 }
 
 type Vector struct{ X, Y int }

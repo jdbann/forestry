@@ -1,7 +1,6 @@
 package world
 
 import (
-	"math/rand"
 	"strings"
 	"time"
 
@@ -28,14 +27,12 @@ var (
 type Model struct {
 	MapSize      geo.Size
 	RenderSystem *render.System
-	Rng          *rand.Rand
 	Scene        *ecs.Scene
 	Size         geo.Size
 }
 
 type Params struct {
 	Client  *client.Client
-	Rng     *rand.Rand
 	MapSize geo.Size
 }
 
@@ -47,12 +44,11 @@ func New(params Params) Model {
 	scene.AddSystem(graphSystem)
 	scene.AddSystem(&pda.System{Client: params.Client})
 	scene.AddSystem(renderSystem)
-	scene.AddSystem(&agent.System{WorldSize: params.MapSize, Rng: params.Rng})
+	scene.AddSystem(&agent.System{WorldSize: params.MapSize})
 	scene.AddSystem(&brain.System{})
 
 	return Model{
 		RenderSystem: renderSystem,
-		Rng:          params.Rng,
 		Scene:        scene,
 		MapSize:      params.MapSize,
 	}
@@ -69,7 +65,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 	switch msg := msg.(type) {
 	case AddPersonMsg:
-		cmd = m.Scene.AddEntity(person.New(m.MapSize.PointWithin(m.Rng)))
+		cmd = m.Scene.AddEntity(person.New(m.MapSize.RandomPointWithin()))
 		return m, cmd
 
 	case ecs.TickMsg:
