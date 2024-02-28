@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/jdbann/forestry/component/agent"
-	"github.com/jdbann/forestry/component/brain"
+	"github.com/jdbann/forestry/component/employment"
 	"github.com/jdbann/forestry/component/graph"
 	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
@@ -45,7 +45,7 @@ func New(params Params) Model {
 	scene.AddSystem(&pda.System{Client: params.Client})
 	scene.AddSystem(renderSystem)
 	scene.AddSystem(&agent.System{WorldSize: params.MapSize})
-	scene.AddSystem(&brain.System{})
+	scene.AddSystem(&employment.System{})
 
 	return Model{
 		RenderSystem: renderSystem,
