@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jdbann/forestry/pkg/color"
 	"github.com/jdbann/forestry/pkg/geo"
 )
 
@@ -21,7 +22,25 @@ type Params struct {
 }
 
 func New(params Params) Model {
+	keyStyle := lipgloss.NewStyle().Foreground(color.Gray12)
+	descStyle := lipgloss.NewStyle().Foreground(color.Gray11)
+	separatorStyle := lipgloss.NewStyle().Foreground(color.Gray6)
+
 	return Model{
+		bubble: helpbubble.Model{
+			ShortSeparator: " ",
+			FullSeparator:  "   ",
+			Ellipsis:       "…",
+			Styles: helpbubble.Styles{
+				Ellipsis:       separatorStyle.Copy(),
+				ShortKey:       keyStyle,
+				ShortDesc:      descStyle,
+				ShortSeparator: separatorStyle,
+				FullKey:        keyStyle.Copy(),
+				FullDesc:       descStyle.Copy(),
+				FullSeparator:  separatorStyle.Copy(),
+			},
+		},
 		keys: params.Keys,
 	}
 }
@@ -45,20 +64,26 @@ func (m Model) View() string {
 }
 
 type KeyMap struct {
-	Quit key.Binding
+	AddPerson key.Binding
+	Quit      key.Binding
 }
 
 func (k KeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Quit}
+	return []key.Binding{k.AddPerson, k.Quit}
 }
 
 func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
+		{k.AddPerson},
 		{k.Quit},
 	}
 }
 
 var DefaultKeys = KeyMap{
+	AddPerson: key.NewBinding(
+		key.WithKeys("a"),
+		key.WithHelp("a", "add person"),
+	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),
 		key.WithHelp("q", "quit"),

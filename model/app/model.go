@@ -50,6 +50,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, m.Keys.Quit):
 			return m, tea.Quit
+		case key.Matches(msg, m.Keys.AddPerson):
+			return m, world.AddPerson
 		default:
 		}
 	default:
