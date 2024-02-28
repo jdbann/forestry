@@ -15,6 +15,11 @@ import (
 	"github.com/jdbann/forestry/pkg/client"
 )
 
+const (
+	initialTermWidth  = 72
+	initialTermHeight = 32
+)
+
 func init() {
 	lipgloss.SetColorProfile(termenv.TrueColor)
 }
@@ -25,7 +30,7 @@ func TestModel(t *testing.T) {
 		Client: c,
 		Rng:    rand.New(rand.NewSource(98)),
 	})
-	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(72, 32))
+	tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(initialTermWidth, initialTermHeight))
 	var out bytes.Buffer
 	teatest.WaitFor(t, io.TeeReader(tm.Output(), &out), func(bts []byte) bool {
 		return bytes.Contains(bts, []byte("quit"))

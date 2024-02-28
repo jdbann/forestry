@@ -13,7 +13,7 @@ type Component struct {
 	Rune     rune
 }
 
-func (c Component) Init() tea.Cmd {
+func (Component) Init() tea.Cmd {
 	return nil
 }
 
@@ -25,6 +25,6 @@ type System struct {
 	ecs.BaseSystem[*Component]
 }
 
-func (s System) Update(_ tea.Msg) tea.Cmd {
+func (System) Update(_ tea.Msg) tea.Cmd {
 	return nil
 }

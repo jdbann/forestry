@@ -93,19 +93,19 @@ func (m Model) View() string {
 	// for now.
 	for y := 0; y < m.MapSize.Height; y++ {
 		if y > 0 {
-			b.WriteString("\n")
+			_, _ = b.WriteString("\n")
 		}
 
 	PixelLoop:
 		for x := 0; x < m.MapSize.Width; x++ {
 			for _, component := range m.RenderSystem.Components {
 				if component.Position.Equals(geo.Point{X: x, Y: y}) {
-					b.WriteString(component.View())
+					_, _ = b.WriteString(component.View())
 					continue PixelLoop
 				}
 			}
 
-			b.WriteString(" ")
+			_, _ = b.WriteString(" ")
 		}
 	}
 

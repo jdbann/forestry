@@ -15,6 +15,11 @@ import (
 	"github.com/muesli/termenv"
 )
 
+const (
+	initialTermWidth  = 28
+	initialTermHeight = 12
+)
+
 func init() {
 	lipgloss.SetColorProfile(termenv.TrueColor)
 }
@@ -26,7 +31,7 @@ func TestModel(t *testing.T) {
 	}
 
 	run := func(t *testing.T, tc testCase) {
-		tm := teatest.NewTestModel(t, tc.model, teatest.WithInitialTermSize(28, 12))
+		tm := teatest.NewTestModel(t, tc.model, teatest.WithInitialTermSize(initialTermWidth, initialTermHeight))
 		var out bytes.Buffer
 		teatest.WaitFor(t, io.TeeReader(tm.Output(), &out), func(bts []byte) bool {
 			return bytes.Contains(bts, []byte("Flexi"))

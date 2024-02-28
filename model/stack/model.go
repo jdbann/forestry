@@ -131,36 +131,36 @@ type Distributor interface {
 
 type HeightDistributor struct{}
 
-func (d HeightDistributor) AvailableSize(msg tea.WindowSizeMsg) int {
+func (HeightDistributor) AvailableSize(msg tea.WindowSizeMsg) int {
 	return msg.Height
 }
 
-func (d HeightDistributor) SlotSize(slot Slot) int {
+func (HeightDistributor) SlotSize(slot Slot) int {
 	return lipgloss.Height(slot.Model.View())
 }
 
-func (d HeightDistributor) UpdateSlot(msg tea.WindowSizeMsg, model tea.Model, size int) (tea.Model, tea.Cmd) {
+func (HeightDistributor) UpdateSlot(msg tea.WindowSizeMsg, model tea.Model, size int) (tea.Model, tea.Cmd) {
 	return model.Update(tea.WindowSizeMsg{Height: size, Width: msg.Width})
 }
 
-func (d HeightDistributor) JoinViews(views []string) string {
+func (HeightDistributor) JoinViews(views []string) string {
 	return lipgloss.JoinVertical(lipgloss.Left, views...)
 }
 
 type WidthDistributor struct{}
 
-func (d WidthDistributor) AvailableSize(msg tea.WindowSizeMsg) int {
+func (WidthDistributor) AvailableSize(msg tea.WindowSizeMsg) int {
 	return msg.Width
 }
 
-func (d WidthDistributor) SlotSize(slot Slot) int {
+func (WidthDistributor) SlotSize(slot Slot) int {
 	return lipgloss.Width(slot.Model.View())
 }
 
-func (d WidthDistributor) UpdateSlot(msg tea.WindowSizeMsg, model tea.Model, size int) (tea.Model, tea.Cmd) {
+func (WidthDistributor) UpdateSlot(msg tea.WindowSizeMsg, model tea.Model, size int) (tea.Model, tea.Cmd) {
 	return model.Update(tea.WindowSizeMsg{Height: msg.Height, Width: size})
 }
 
-func (d WidthDistributor) JoinViews(views []string) string {
+func (WidthDistributor) JoinViews(views []string) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, views...)
 }

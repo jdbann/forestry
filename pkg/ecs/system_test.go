@@ -47,7 +47,7 @@ type countComponent struct {
 	count int
 }
 
-func (c countComponent) Init() tea.Cmd {
+func (countComponent) Init() tea.Cmd {
 	return nil
 }
 

@@ -26,7 +26,7 @@ func New(params Params) Model {
 	}
 }
 
-func (m Model) Init() tea.Cmd {
+func (Model) Init() tea.Cmd {
 	return nil
 }
 
@@ -35,6 +35,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.size = geo.Size(msg)
 		m.bubble.Width = msg.Width
+	default:
 	}
 	return m, nil
 }
