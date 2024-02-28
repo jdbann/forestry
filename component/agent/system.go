@@ -32,13 +32,13 @@ type System struct {
 // Update handles tick messages, moving agents if enough time has elapsed.
 func (s System) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case agentMsg:
+	case ecs.EntityMsg:
 		for _, c := range s.Components {
-			if c.Entity.ID() != msg.id {
+			if c.Entity.ID() != msg.EntityID {
 				continue
 			}
 
-			s.UpdateComponent(c, msg.msg)
+			s.UpdateComponent(c, msg.Msg)
 		}
 	default:
 		for _, c := range s.Components {
@@ -90,26 +90,4 @@ func (System) UpdateComponent(c *Component, msg tea.Msg) tea.Cmd {
 	}
 
 	return nil
-}
-
-type agentMsg struct {
-	id  int
-	msg tea.Msg
-}
-
-func wrapCmd(id int, cmd tea.Cmd) tea.Cmd {
-	if cmd == nil {
-		return nil
-	}
-
-	return func() tea.Msg {
-		return wrapMsg(id, cmd())
-	}
-}
-
-func wrapMsg(id int, msg tea.Msg) tea.Msg {
-	return agentMsg{
-		id:  id,
-		msg: msg,
-	}
 }

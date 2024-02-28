@@ -127,3 +127,8 @@ func (s *Scene) Update(msg tea.Msg) tea.Cmd {
 }
 
 type TickMsg time.Duration
+
+type EntityMsg struct {
+	EntityID int
+	Msg      tea.Msg
+}
