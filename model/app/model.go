@@ -25,22 +25,22 @@ type Params struct {
 
 func New(params Params) Model {
 	keys := help.DefaultKeys
-	help := help.New(help.Params{
+	helpModel := help.New(help.Params{
 		Keys: keys,
 	})
-	world := world.New(world.Params{
+	worldModel := world.New(world.Params{
 		Client:  params.Client,
 		Rng:     params.Rng,
 		MapSize: geo.Size{Width: 64, Height: 24},
 	})
-	stack := stack.NewVertical(
-		stack.FlexSlot(world),
-		stack.FixedSlot(help),
+	stackModel := stack.NewVertical(
+		stack.FlexSlot(worldModel),
+		stack.FixedSlot(helpModel),
 	)
 
 	return Model{
 		Keys:  keys,
-		Stack: stack,
+		Stack: stackModel,
 	}
 }
 
@@ -54,7 +54,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, m.Keys.Quit):
 			return m, tea.Quit
+		default:
 		}
+	default:
 	}
 
 	var cmd tea.Cmd

@@ -56,7 +56,7 @@ type BaseComponent struct {
 	Entity *Entity
 }
 
-func (c *BaseComponent) Init() tea.Cmd {
+func (*BaseComponent) Init() tea.Cmd {
 	return nil
 }
 

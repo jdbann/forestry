@@ -65,11 +65,11 @@ type State interface {
 
 type BaseState struct{}
 
-func (s BaseState) Update(_ *Component, _ tea.Msg) tea.Cmd {
+func (BaseState) Update(_ *Component, _ tea.Msg) tea.Cmd {
 	return nil
 }
 
-func (s BaseState) OnEnter(_ *Component) tea.Cmd {
+func (BaseState) OnEnter(_ *Component) tea.Cmd {
 	return nil
 }
 

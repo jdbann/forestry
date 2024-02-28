@@ -46,7 +46,7 @@ func (s *UnregisteredState) Update(c *brain.Component, msg tea.Msg) tea.Cmd {
 	return nil
 }
 
-func (s UnregisteredState) OnEnter(c *brain.Component) tea.Cmd {
+func (UnregisteredState) OnEnter(c *brain.Component) tea.Cmd {
 	pdac, ok := ecs.GetComponent[*pda.Component](c.Entity)
 	if !ok {
 		return nil
@@ -61,7 +61,7 @@ type RegisteredState struct {
 	brain.BaseState
 }
 
-func (s RegisteredState) Update(_ *brain.Component, _ tea.Msg) tea.Cmd {
+func (RegisteredState) Update(_ *brain.Component, _ tea.Msg) tea.Cmd {
 	_, _ = fmt.Println("RegisteredState - Update")
 	return nil
 }
