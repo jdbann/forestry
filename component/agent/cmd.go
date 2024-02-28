@@ -8,7 +8,10 @@ import (
 
 func SetDestination(e *ecs.Entity, dest geo.Point) tea.Cmd {
 	return func() tea.Msg {
-		return wrapMsg(e.ID(), setDestinationMsg(dest))
+		return ecs.EntityMsg{
+			EntityID: e.ID(),
+			Msg:      setDestinationMsg(dest),
+		}
 	}
 }
 

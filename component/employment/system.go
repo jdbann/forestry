@@ -21,12 +21,12 @@ func (s System) Update(msg tea.Msg) tea.Cmd {
 	)
 
 	switch msg := msg.(type) {
-	case employmentMsg:
+	case ecs.EntityMsg:
 		for _, c := range s.Components {
-			if c.Entity.ID() != msg.id {
+			if c.Entity.ID() != msg.EntityID {
 				continue
 			}
-			cmds = append(cmds, s.UpdateComponent(c, msg.msg))
+			cmds = append(cmds, s.UpdateComponent(c, msg.Msg))
 			break
 		}
 	default:
@@ -54,26 +54,4 @@ func (System) UpdateComponent(c *Component, msg tea.Msg) tea.Cmd {
 	}
 
 	return nil
-}
-
-type employmentMsg struct {
-	id  int
-	msg tea.Msg
-}
-
-func wrapCmd(id int, cmd tea.Cmd) tea.Cmd {
-	if cmd == nil {
-		return nil
-	}
-
-	return func() tea.Msg {
-		return wrapMsg(id, cmd())
-	}
-}
-
-func wrapMsg(id int, msg tea.Msg) tea.Msg {
-	return employmentMsg{
-		id:  id,
-		msg: msg,
-	}
 }

@@ -7,7 +7,10 @@ import (
 
 func changeState(e *ecs.Entity, nextState State) tea.Cmd {
 	return func() tea.Msg {
-		return wrapMsg(e.ID(), changeStateMsg(nextState))
+		return ecs.EntityMsg{
+			EntityID: e.ID(),
+			Msg:      changeStateMsg(nextState),
+		}
 	}
 }
 
