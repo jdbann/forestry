@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jdbann/forestry/component/agent"
 	"github.com/jdbann/forestry/component/graph"
+	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
@@ -27,31 +28,27 @@ func (IdleState) OnEnter(c *Component) tea.Cmd {
 
 	renderComponent.Rune = 'I'
 
-	graphComponent, ok := ecs.GetComponent[*graph.Component](c.Entity)
-	if !ok {
-		return nil
+	pdaComponent, ok := ecs.GetComponent[*pda.Component](c.Entity)
+	if !ok || pdaComponent.Registered {
+		return startIdleWalk(c)
 	}
 
-	destination := graphComponent.Graph.Size().RandomPointWithin()
-
-	return tea.Sequence(
-		sleepCmd(time.Millisecond*time.Duration(rand.Intn(2000))),
-		tea.Batch(
-			agent.SetDestination(c.Entity, destination),
-			changeState(c.Entity, WalkingState{destination: destination}),
-		),
-	)
+	return pda.AttemptRegistration(c.Entity)
 }
 
-func (IdleState) Update(_ *Component, _ tea.Msg) tea.Cmd {
+func (IdleState) Update(c *Component, msg tea.Msg) tea.Cmd {
+	switch msg.(type) {
+	case pda.RegisterFailMsg, pda.RegisterSuccessMsg:
+		return startIdleWalk(c)
+	}
 	return nil
 }
 
-type WalkingState struct {
+type IdleWalkingState struct {
 	destination geo.Point
 }
 
-func (WalkingState) OnEnter(c *Component) tea.Cmd {
+func (IdleWalkingState) OnEnter(c *Component) tea.Cmd {
 	renderComponent, ok := ecs.GetComponent[*render.Component](c.Entity)
 	if !ok {
 		return nil
@@ -61,7 +58,7 @@ func (WalkingState) OnEnter(c *Component) tea.Cmd {
 	return nil
 }
 
-func (s WalkingState) Update(c *Component, msg tea.Msg) tea.Cmd {
+func (s IdleWalkingState) Update(c *Component, msg tea.Msg) tea.Cmd {
 	switch msg.(type) {
 	case ecs.TickMsg:
 		renderComponent, ok := ecs.GetComponent[*render.Component](c.Entity)
@@ -82,4 +79,21 @@ func sleepCmd(d time.Duration) tea.Cmd {
 		time.Sleep(d)
 		return nil
 	}
+}
+
+func startIdleWalk(c *Component) tea.Cmd {
+	graphComponent, ok := ecs.GetComponent[*graph.Component](c.Entity)
+	if !ok {
+		return nil
+	}
+
+	destination := graphComponent.Graph.Size().RandomPointWithin()
+
+	return tea.Sequence(
+		sleepCmd(time.Millisecond*time.Duration(rand.Intn(2000))),
+		tea.Batch(
+			agent.SetDestination(c.Entity, destination),
+			changeState(c.Entity, IdleWalkingState{destination: destination}),
+		),
+	)
 }

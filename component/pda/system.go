@@ -10,7 +10,8 @@ import (
 type Component struct {
 	ecs.BaseComponent
 
-	Client *client.Client
+	Client     *client.Client
+	Registered bool
 }
 
 type System struct {
@@ -39,6 +40,31 @@ func (s *System) AddComponentsFromEntity(e *ecs.Entity) tea.Cmd {
 	return c.Init()
 }
 
-func (System) Update(_ tea.Msg) tea.Cmd {
+func (s System) Update(msg tea.Msg) tea.Cmd {
+	switch msg := msg.(type) {
+	case ecs.EntityMsg:
+		for _, c := range s.Components {
+			if c.Entity.ID() != msg.EntityID {
+				continue
+			}
+			return s.UpdateComponent(c, msg.Msg)
+		}
+	default:
+	}
+
+	return nil
+}
+
+func (System) UpdateComponent(c *Component, msg tea.Msg) tea.Cmd {
+	switch msg.(type) {
+	case attemptRegistrationMsg:
+		if c.Registered {
+			return nil
+		}
+		return performRegistration(c)
+	case RegisterSuccessMsg:
+		c.Registered = true
+	default:
+	}
 	return nil
 }
