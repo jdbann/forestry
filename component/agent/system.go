@@ -38,11 +38,11 @@ func (s System) Update(msg tea.Msg) tea.Cmd {
 				continue
 			}
 
-			s.UpdateComponent(c, msg.Msg)
+			return s.UpdateComponent(c, msg.Msg)
 		}
 	default:
 		for _, c := range s.Components {
-			s.UpdateComponent(c, msg)
+			return s.UpdateComponent(c, msg)
 		}
 	}
 
@@ -87,7 +87,20 @@ func (System) UpdateComponent(c *Component, msg tea.Msg) tea.Cmd {
 		}
 
 		renderComponent.Position, c.Path = c.Path[0], c.Path[1:]
+
+		return ReportMoved(c.Entity)
 	}
 
 	return nil
+}
+
+type EntityMovedMsg struct{}
+
+func ReportMoved(e *ecs.Entity) tea.Cmd {
+	return func() tea.Msg {
+		return ecs.EntityMsg{
+			EntityID: e.ID(),
+			Msg:      EntityMovedMsg{},
+		}
+	}
 }
