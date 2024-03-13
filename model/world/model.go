@@ -13,6 +13,7 @@ import (
 	"github.com/jdbann/forestry/component/pda"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/entity/person"
+	"github.com/jdbann/forestry/entity/tree"
 	"github.com/jdbann/forestry/pkg/client"
 	"github.com/jdbann/forestry/pkg/color"
 	"github.com/jdbann/forestry/pkg/ecs"
@@ -66,6 +67,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case AddPersonMsg:
 		cmd = m.Scene.AddEntity(person.New(m.MapSize.RandomPointWithin()))
+		return m, cmd
+
+	case AddTreeMsg:
+		cmd = m.Scene.AddEntity(tree.New(m.MapSize.RandomPointWithin()))
 		return m, cmd
 
 	case ecs.TickMsg:
@@ -123,4 +128,10 @@ type AddPersonMsg struct{}
 
 func AddPerson() tea.Msg {
 	return AddPersonMsg{}
+}
+
+type AddTreeMsg struct{}
+
+func AddTree() tea.Msg {
+	return AddTreeMsg{}
 }

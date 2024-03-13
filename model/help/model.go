@@ -65,24 +65,29 @@ func (m Model) View() string {
 
 type KeyMap struct {
 	AddPerson key.Binding
+	AddTree   key.Binding
 	Quit      key.Binding
 }
 
 func (k KeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.AddPerson, k.Quit}
+	return []key.Binding{k.AddPerson, k.AddTree, k.Quit}
 }
 
 func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.AddPerson},
+		{k.AddPerson, k.AddTree},
 		{k.Quit},
 	}
 }
 
 var DefaultKeys = KeyMap{
 	AddPerson: key.NewBinding(
-		key.WithKeys("a"),
-		key.WithHelp("a", "add person"),
+		key.WithKeys("p"),
+		key.WithHelp("p", "add person"),
+	),
+	AddTree: key.NewBinding(
+		key.WithKeys("t"),
+		key.WithHelp("t", "add tree"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),

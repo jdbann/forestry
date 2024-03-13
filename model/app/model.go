@@ -41,7 +41,7 @@ func New(params Params) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	return tea.Batch(m.Stack.Init(), world.AddPerson)
+	return tea.Batch(m.Stack.Init(), world.AddPerson, world.AddTree, world.AddTree, world.AddTree, world.AddTree, world.AddTree)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -52,6 +52,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case key.Matches(msg, m.Keys.AddPerson):
 			return m, world.AddPerson
+		case key.Matches(msg, m.Keys.AddTree):
+			return m, world.AddTree
 		default:
 		}
 	default:
