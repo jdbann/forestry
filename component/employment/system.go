@@ -51,7 +51,8 @@ func (System) UpdateComponent(c *Component, msg tea.Msg) tea.Cmd {
 		}
 
 		return c.CurrentState.Update(c, msg)
-	}
 
-	return nil
+	default:
+		return c.CurrentState.Update(c, msg)
+	}
 }
