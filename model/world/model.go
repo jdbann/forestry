@@ -11,6 +11,7 @@ import (
 	"github.com/jdbann/forestry/component/employment"
 	"github.com/jdbann/forestry/component/graph"
 	"github.com/jdbann/forestry/component/pda"
+	"github.com/jdbann/forestry/component/physics"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/entity/person"
 	"github.com/jdbann/forestry/entity/tree"
@@ -47,6 +48,7 @@ func New(params Params) Model {
 	scene.AddSystem(renderSystem)
 	scene.AddSystem(&agent.System{WorldSize: params.MapSize})
 	scene.AddSystem(&employment.System{})
+	scene.AddSystem(&physics.System{})
 
 	return Model{
 		RenderSystem: renderSystem,

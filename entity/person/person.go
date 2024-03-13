@@ -7,6 +7,7 @@ import (
 	"github.com/jdbann/forestry/component/employment"
 	"github.com/jdbann/forestry/component/graph"
 	"github.com/jdbann/forestry/component/pda"
+	"github.com/jdbann/forestry/component/physics"
 	"github.com/jdbann/forestry/component/render"
 	"github.com/jdbann/forestry/pkg/ecs"
 	"github.com/jdbann/forestry/pkg/geo"
@@ -25,6 +26,7 @@ func New(at geo.Point) *ecs.Entity {
 		&pda.Component{},
 		&graph.Component{},
 		&employment.Component{},
+		&physics.Component{},
 	)
 	return e
 }
